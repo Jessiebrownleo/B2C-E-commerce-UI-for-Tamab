@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCartIcon, HeartIcon, ShareIcon, StarIcon, TruckIcon, ShieldCheckIcon, RefreshCwIcon, CheckIcon, MinusIcon, PlusIcon, ChevronRightIcon } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import ProductCard from '../components/products/ProductCard';
+import { useCart } from '../contexts/CartContext';
 const ProductDetail = () => {
   const [mainImage, setMainImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -101,6 +102,40 @@ const ProductDetail = () => {
   };
   const incrementQuantity = () => {
     setQuantity(quantity + 1);
+  };
+
+  // Use cart context and navigation
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
+  const [isAdded, setIsAdded] = useState(false);
+
+  // Handle add to cart
+  const handleAddToCart = () => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      discount: product.discount
+    }, quantity);
+
+    // Show added confirmation
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 2000);
+  };
+
+  // Handle buy now
+  const handleBuyNow = () => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      discount: product.discount
+    }, quantity);
+
+    // Navigate to checkout
+    navigate('/cart');
   };
   return <div className="bg-gray-50 w-full">
       {/* Breadcrumb */}
@@ -218,10 +253,23 @@ const ProductDetail = () => {
               </div>
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                <Button variant="primary" size="lg" fullWidth icon={<ShoppingCartIcon className="h-5 w-5" />}>
-                  Add to Cart
+                <Button 
+                  variant="primary" 
+                  size="lg" 
+                  fullWidth 
+                  icon={isAdded ? <CheckIcon className="h-5 w-5" /> : <ShoppingCartIcon className="h-5 w-5" />}
+                  onClick={handleAddToCart}
+                  disabled={isAdded || product.stock <= 0}
+                >
+                  {isAdded ? 'Added to Cart' : 'Add to Cart'}
                 </Button>
-                <Button variant="secondary" size="lg" fullWidth>
+                <Button 
+                  variant="secondary" 
+                  size="lg" 
+                  fullWidth
+                  onClick={handleBuyNow}
+                  disabled={product.stock <= 0}
+                >
                   Buy Now
                 </Button>
               </div>

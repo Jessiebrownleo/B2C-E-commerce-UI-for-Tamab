@@ -1,40 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { XIcon, MinusIcon, PlusIcon, ShoppingBagIcon, RefreshCwIcon, ArrowRightIcon, TruckIcon, ShieldCheckIcon } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import { useCart } from '../contexts/CartContext';
 const Cart = () => {
-  // Sample cart items
-  const [cartItems, setCartItems] = useState([{
-    id: '1',
-    name: 'Premium Portland Cement (50kg)',
-    price: 12.99,
-    image: 'https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-    quantity: 5
-  }, {
-    id: '3',
-    name: 'Professional Cordless Drill Set',
-    price: 189.99,
-    image: 'https://images.unsplash.com/photo-1580901368919-7738efb0f87e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-    quantity: 1,
-    discount: 15
-  }, {
-    id: '6',
-    name: 'Steel Reinforcement Bars (10mm, Bundle of 10)',
-    price: 149.99,
-    image: 'https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-    quantity: 2
-  }]);
+  // Use cart context
+  const { cartItems, updateQuantity, removeFromCart, clearCart, getCartTotal } = useCart();
+
   const [couponCode, setCouponCode] = useState('');
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponDiscount, setCouponDiscount] = useState(0);
+
   // Calculate subtotal
-  const subtotal = cartItems.reduce((total, item) => {
-    const itemPrice = item.discount ? item.price * (1 - item.discount / 100) : item.price;
-    return total + itemPrice * item.quantity;
-  }, 0);
+  const subtotal = getCartTotal();
+
   // Shipping cost calculation
   const shippingCost = subtotal >= 500 ? 0 : 25;
+
   // Apply coupon
   const applyCoupon = () => {
     if (couponCode.toUpperCase() === 'TAMAB20') {
@@ -42,21 +25,31 @@ const Cart = () => {
       setCouponDiscount(subtotal * 0.2);
     }
   };
-  // Update quantity
-  const updateQuantity = (id, newQuantity) => {
+
+  // Reset coupon when subtotal changes
+  useEffect(() => {
+    if (couponApplied) {
+      setCouponDiscount(subtotal * 0.2);
+    }
+  }, [subtotal, couponApplied]);
+
+  // Handle quantity update
+  const handleUpdateQuantity = (id, newQuantity) => {
     if (newQuantity < 1) return;
-    setCartItems(cartItems.map(item => item.id === id ? {
-      ...item,
-      quantity: newQuantity
-    } : item));
+    updateQuantity(id, newQuantity);
   };
-  // Remove item
-  const removeItem = id => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+
+  // Handle remove item
+  const handleRemoveItem = (id) => {
+    removeFromCart(id);
   };
-  // Clear cart
-  const clearCart = () => {
-    setCartItems([]);
+
+  // Handle clear cart
+  const handleClearCart = () => {
+    clearCart();
+    setCouponApplied(false);
+    setCouponDiscount(0);
+    setCouponCode('');
   };
   return <div className="bg-gray-50 w-full min-h-screen">
       {/* Page Header */}
@@ -81,7 +74,7 @@ const Cart = () => {
                   <h2 className="text-xl font-bold">
                     Shopping Cart ({cartItems.length} items)
                   </h2>
-                  <button onClick={clearCart} className="text-sm text-amber-600 hover:text-amber-700 flex items-center">
+                  <button onClick={handleClearCart} className="text-sm text-amber-600 hover:text-amber-700 flex items-center">
                     <RefreshCwIcon className="h-4 w-4 mr-1" />
                     Clear Cart
                   </button>
@@ -121,11 +114,11 @@ const Cart = () => {
                             {/* Quantity Controls */}
                             <div className="flex items-center">
                               <div className="flex border border-gray-300 rounded-md">
-                                <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-l-md">
+                                <button onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)} className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-l-md">
                                   <MinusIcon className="h-4 w-4" />
                                 </button>
-                                <input type="text" value={item.quantity} onChange={e => updateQuantity(item.id, parseInt(e.target.value) || 1)} className="w-12 text-center border-x border-gray-300" />
-                                <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-r-md">
+                                <input type="text" value={item.quantity} onChange={e => handleUpdateQuantity(item.id, parseInt(e.target.value) || 1)} className="w-12 text-center border-x border-gray-300" />
+                                <button onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)} className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-r-md">
                                   <PlusIcon className="h-4 w-4" />
                                 </button>
                               </div>
@@ -133,7 +126,7 @@ const Cart = () => {
                                 <div className="font-medium text-gray-900">
                                   ${(itemPrice * item.quantity).toFixed(2)}
                                 </div>
-                                <button onClick={() => removeItem(item.id)} className="text-sm text-red-600 hover:text-red-800 flex items-center mt-1">
+                                <button onClick={() => handleRemoveItem(item.id)} className="text-sm text-red-600 hover:text-red-800 flex items-center mt-1">
                                   <XIcon className="h-4 w-4 mr-1" />
                                   Remove
                                 </button>

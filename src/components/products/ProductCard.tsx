@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCartIcon, StarIcon } from 'lucide-react';
+import { ShoppingCartIcon, StarIcon, CheckIcon } from 'lucide-react';
 import Button from '../ui/Button';
+import { useCart } from '../../contexts/CartContext';
 interface ProductCardProps {
   id: string;
   name: string;
@@ -35,6 +36,25 @@ const ProductCard: React.FC<ProductCardProps> = ({
     style: 'currency',
     currency: 'USD'
   }).format(discountedPrice);
+
+  // Use the cart context
+  const { addToCart } = useCart();
+  const [isAdded, setIsAdded] = useState(false);
+
+  // Handle add to cart
+  const handleAddToCart = () => {
+    addToCart({
+      id,
+      name,
+      price,
+      image,
+      discount
+    });
+
+    // Show added confirmation
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 2000);
+  };
   return <div className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden transition-all hover:shadow-md">
       {/* Badge */}
       {(isNew || discount) && <div className="absolute top-2 left-2 z-10">
@@ -80,8 +100,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <span className="ml-1 text-xs text-gray-500">({reviewCount})</span>
         </div>
         {/* Add to cart button */}
-        <Button variant="primary" size="sm" fullWidth icon={<ShoppingCartIcon className="h-4 w-4" />}>
-          Add to Cart
+        <Button 
+          variant="primary" 
+          size="sm" 
+          fullWidth 
+          icon={isAdded ? <CheckIcon className="h-4 w-4" /> : <ShoppingCartIcon className="h-4 w-4" />}
+          onClick={handleAddToCart}
+          disabled={isAdded}
+        >
+          {isAdded ? 'Added to Cart' : 'Add to Cart'}
         </Button>
       </div>
     </div>;

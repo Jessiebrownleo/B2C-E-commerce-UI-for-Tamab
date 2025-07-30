@@ -1,37 +1,55 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CreditCardIcon, ShieldCheckIcon, ChevronDownIcon, CheckIcon, TruckIcon, InfoIcon } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import { useCart } from '../contexts/CartContext';
 const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState('aba');
   const [deliveryMethod, setDeliveryMethod] = useState('standard');
-  // Sample cart items for order summary
-  const cartItems = [{
-    id: '1',
-    name: 'Premium Portland Cement (50kg)',
-    price: 12.99,
-    quantity: 5,
-    total: 64.95
-  }, {
-    id: '3',
-    name: 'Professional Cordless Drill Set',
-    price: 189.99,
-    discount: 15,
-    discountedPrice: 161.49,
-    quantity: 1,
-    total: 161.49
-  }, {
-    id: '6',
-    name: 'Steel Reinforcement Bars (10mm, Bundle of 10)',
-    price: 149.99,
-    quantity: 2,
-    total: 299.98
-  }];
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+
+  // Use cart context and navigation
+  const { cartItems, getCartTotal, clearCart } = useCart();
+  const navigate = useNavigate();
+
+  // Calculate item totals
+  const calculateItemTotal = (item) => {
+    const itemPrice = item.discount 
+      ? item.price * (1 - item.discount / 100) 
+      : item.price;
+    return itemPrice * item.quantity;
+  };
+
   // Calculate totals
-  const subtotal = cartItems.reduce((total, item) => total + item.total, 0);
+  const subtotal = getCartTotal();
   const shippingCost = deliveryMethod === 'express' ? 35 : subtotal >= 500 ? 0 : 25;
   const total = subtotal + shippingCost;
+
+  // Handle place order
+  const handlePlaceOrder = () => {
+    // In a real application, you would validate the form and submit the order to a backend
+    setIsSubmitting(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      // Clear the cart
+      clearCart();
+
+      // Show success message or redirect to confirmation page
+      setOrderPlaced(true);
+      setIsSubmitting(false);
+
+      // In a real application, you would redirect to an order confirmation page
+      // For now, we'll redirect to the home page after a delay
+      setTimeout(() => {
+        navigate('/', { state: { orderPlaced: true } });
+      }, 3000);
+    }, 2000);
+  };
   return <div className="bg-gray-50 w-full min-h-screen">
       {/* Page Header */}
       <div className="bg-stone-800 text-white py-8">
@@ -364,18 +382,26 @@ const Checkout = () => {
               <h2 className="text-xl font-bold mb-6">Order Summary</h2>
               {/* Order Items */}
               <div className="space-y-4 mb-6">
-                {cartItems.map(item => <div key={item.id} className="flex justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-sm font-medium">{item.name}</h3>
-                      <p className="text-xs text-gray-500">
-                        Qty: {item.quantity} x $
-                        {item.discount ? item.discountedPrice.toFixed(2) : item.price.toFixed(2)}
-                      </p>
+                {cartItems.map(item => {
+                  const itemPrice = item.discount 
+                    ? item.price * (1 - item.discount / 100) 
+                    : item.price;
+                  const itemTotal = itemPrice * item.quantity;
+
+                  return (
+                    <div key={item.id} className="flex justify-between">
+                      <div className="flex-1">
+                        <h3 className="text-sm font-medium">{item.name}</h3>
+                        <p className="text-xs text-gray-500">
+                          Qty: {item.quantity} x ${itemPrice.toFixed(2)}
+                        </p>
+                      </div>
+                      <span className="font-medium">
+                        ${itemTotal.toFixed(2)}
+                      </span>
                     </div>
-                    <span className="font-medium">
-                      ${item.total.toFixed(2)}
-                    </span>
-                  </div>)}
+                  );
+                })}
               </div>
               {/* Order Totals */}
               <div className="border-t border-gray-200 pt-4 space-y-2">
@@ -397,7 +423,13 @@ const Checkout = () => {
               {/* Terms and Conditions */}
               <div className="mt-6 mb-6">
                 <div className="flex items-start">
-                  <input id="terms" type="checkbox" className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500 mt-1" />
+                  <input 
+                    id="terms" 
+                    type="checkbox" 
+                    className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500 mt-1"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                  />
                   <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
                     I have read and agree to the website's{' '}
                     <Link to="/terms" className="text-amber-600 hover:text-amber-700">
@@ -411,9 +443,22 @@ const Checkout = () => {
                 </div>
               </div>
               {/* Place Order Button */}
-              <Button variant="primary" size="lg" fullWidth>
-                Place Order
-              </Button>
+              {orderPlaced ? (
+                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                  <p className="font-bold">Order Placed Successfully!</p>
+                  <p>Thank you for your order. You will be redirected to the home page shortly.</p>
+                </div>
+              ) : (
+                <Button 
+                  variant="primary" 
+                  size="lg" 
+                  fullWidth
+                  onClick={handlePlaceOrder}
+                  disabled={!termsAccepted || isSubmitting || cartItems.length === 0}
+                >
+                  {isSubmitting ? 'Processing...' : 'Place Order'}
+                </Button>
+              )}
               {/* Secure Checkout */}
               <div className="mt-6 flex justify-center items-center text-sm text-gray-600">
                 <ShieldCheckIcon className="h-5 w-5 text-green-600 mr-2" />

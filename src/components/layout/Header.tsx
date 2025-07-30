@@ -1,10 +1,31 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { SearchIcon, ShoppingCartIcon, UserIcon, MenuIcon, XIcon, PhoneIcon, TruckIcon } from 'lucide-react';
+import { useCart } from '../../contexts/CartContext';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const { getCartCount } = useCart();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const cartItemCount = getCartCount();
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Handle search submission
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
   };
   return <header className="w-full bg-white shadow-sm">
       {/* Top bar */}
@@ -32,19 +53,30 @@ const Header = () => {
             </div>
           </Link>
           {/* Search bar - hidden on mobile */}
-          <div className="hidden md:flex flex-grow mx-8 relative">
-            <input type="text" placeholder="Search for materials, tools..." className="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500" />
-            <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-amber-600">
+          <form onSubmit={handleSearch} className="hidden md:flex flex-grow mx-8 relative">
+            <input 
+              type="text" 
+              placeholder="Search for materials, tools..." 
+              className="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+            <button 
+              type="submit"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-amber-600"
+            >
               <SearchIcon className="h-5 w-5" />
             </button>
-          </div>
+          </form>
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/cart" className="flex items-center text-gray-700 hover:text-amber-600">
               <ShoppingCartIcon className="h-6 w-6" />
-              <span className="ml-1 bg-amber-600 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
-                3
-              </span>
+              {cartItemCount > 0 && (
+                <span className="ml-1 bg-amber-600 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
+                  {cartItemCount}
+                </span>
+              )}
             </Link>
             <Link to="/login" className="flex items-center text-gray-700 hover:text-amber-600">
               <UserIcon className="h-6 w-6" />
@@ -54,9 +86,11 @@ const Header = () => {
           <div className="md:hidden flex items-center">
             <Link to="/cart" className="mr-4 text-gray-700">
               <ShoppingCartIcon className="h-6 w-6" />
-              <span className="absolute top-8 right-16 bg-amber-600 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
-                3
-              </span>
+              {cartItemCount > 0 && (
+                <span className="absolute top-8 right-16 bg-amber-600 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
+                  {cartItemCount}
+                </span>
+              )}
             </Link>
             <button onClick={toggleMenu} className="text-gray-700 hover:text-amber-600 focus:outline-none">
               {isMenuOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
@@ -64,12 +98,21 @@ const Header = () => {
           </div>
         </div>
         {/* Mobile search - visible only on mobile */}
-        <div className="mt-4 md:hidden relative">
-          <input type="text" placeholder="Search for materials, tools..." className="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500" />
-          <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-amber-600">
+        <form onSubmit={handleSearch} className="mt-4 md:hidden relative">
+          <input 
+            type="text" 
+            placeholder="Search for materials, tools..." 
+            className="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          <button 
+            type="submit"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-amber-600"
+          >
             <SearchIcon className="h-5 w-5" />
           </button>
-        </div>
+        </form>
       </div>
       {/* Navigation bar */}
       <nav className="bg-white border-t border-b border-gray-200">
@@ -83,27 +126,7 @@ const Header = () => {
               </li>
               <li>
                 <Link to="/products" className="text-gray-700 hover:text-amber-600 font-medium">
-                  Shop All
-                </Link>
-              </li>
-              <li>
-                <Link to="/products?category=building" className="text-gray-700 hover:text-amber-600 font-medium">
-                  Building Materials
-                </Link>
-              </li>
-              <li>
-                <Link to="/products?category=tools" className="text-gray-700 hover:text-amber-600 font-medium">
-                  Tools
-                </Link>
-              </li>
-              <li>
-                <Link to="/products?category=plumbing" className="text-gray-700 hover:text-amber-600 font-medium">
-                  Plumbing
-                </Link>
-              </li>
-              <li>
-                <Link to="/products?category=paint" className="text-gray-700 hover:text-amber-600 font-medium">
-                  Paint
+                  Products
                 </Link>
               </li>
               <li>
