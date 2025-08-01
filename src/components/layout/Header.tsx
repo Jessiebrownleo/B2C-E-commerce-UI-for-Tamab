@@ -149,27 +149,7 @@ const Header = () => {
               </li>
               <li>
                 <Link to="/products" className="block text-gray-700 hover:text-amber-600 font-medium py-1" onClick={toggleMenu}>
-                  Shop All
-                </Link>
-              </li>
-              <li>
-                <Link to="/products?category=building" className="block text-gray-700 hover:text-amber-600 font-medium py-1" onClick={toggleMenu}>
-                  Building Materials
-                </Link>
-              </li>
-              <li>
-                <Link to="/products?category=tools" className="block text-gray-700 hover:text-amber-600 font-medium py-1" onClick={toggleMenu}>
-                  Tools
-                </Link>
-              </li>
-              <li>
-                <Link to="/products?category=plumbing" className="block text-gray-700 hover:text-amber-600 font-medium py-1" onClick={toggleMenu}>
-                  Plumbing
-                </Link>
-              </li>
-              <li>
-                <Link to="/products?category=paint" className="block text-gray-700 hover:text-amber-600 font-medium py-1" onClick={toggleMenu}>
-                  Paint
+                  Products
                 </Link>
               </li>
               <li>

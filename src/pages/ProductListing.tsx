@@ -10,6 +10,8 @@ const ProductListing = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortOption, setSortOption] = useState('popular');
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 6; // Number of products per page
   const location = useLocation();
 
   // Get search query from URL
@@ -135,22 +137,6 @@ const ProductListing = () => {
                   ))}
                 </div>
               </div>
-              {/* Price Range */}
-              <div className="mb-6">
-                <h3 className="font-medium mb-3">Price Range</h3>
-                <div className="flex items-center">
-                  <input type="text" placeholder="Min" className="w-full p-2 border border-gray-300 rounded-md text-sm mr-2" />
-                  <span className="text-gray-500">-</span>
-                  <input type="text" placeholder="Max" className="w-full p-2 border border-gray-300 rounded-md text-sm ml-2" />
-                </div>
-                <div className="mt-3">
-                  <input type="range" min="0" max="1000" className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                </div>
-              </div>
-              {/* Apply Filters Button */}
-              <Button variant="primary" fullWidth onClick={resetFilters}>
-                Apply Filters
-              </Button>
             </Card>
           </aside>
           {/* Mobile Filter Button */}
@@ -200,12 +186,6 @@ const ProductListing = () => {
                   <div className="mt-3">
                     <input type="range" min="0" max="1000" className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
                   </div>
-                </div>
-                {/* Apply Filters Button */}
-                <div className="mt-6">
-                  <Button variant="primary" fullWidth onClick={toggleFilter}>
-                    Apply Filters
-                  </Button>
                 </div>
               </div>
             </div>}
@@ -273,9 +253,13 @@ const ProductListing = () => {
             </div>
             {/* Products Grid */}
             {viewMode === 'grid' ? <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map(product => <ProductCard key={product.id} {...product} />)}
+                {filteredProducts
+                .slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage)
+                .map(product => <ProductCard key={product.id} {...product} />)}
               </div> : <div className="space-y-4">
-                {filteredProducts.map(product => <Card key={product.id} className="flex flex-col sm:flex-row overflow-hidden">
+                {filteredProducts
+                  .slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage)
+                  .map(product => <Card key={product.id} className="flex flex-col sm:flex-row overflow-hidden">
                     <div className="sm:w-48 h-48">
                       <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                     </div>
@@ -322,25 +306,35 @@ const ProductListing = () => {
                   </Card>)}
               </div>}
             {/* Pagination */}
-            <div className="mt-8 flex justify-center">
-              <nav className="flex items-center">
-                <button className="px-3 py-1 border border-gray-300 rounded-l-md hover:bg-gray-100">
-                  Previous
-                </button>
-                <button className="px-3 py-1 border-t border-b border-gray-300 bg-amber-600 text-white">
-                  1
-                </button>
-                <button className="px-3 py-1 border-t border-b border-gray-300 hover:bg-gray-100">
-                  2
-                </button>
-                <button className="px-3 py-1 border-t border-b border-gray-300 hover:bg-gray-100">
-                  3
-                </button>
-                <button className="px-3 py-1 border border-gray-300 rounded-r-md hover:bg-gray-100">
-                  Next
-                </button>
-              </nav>
-            </div>
+            {filteredProducts.length > productsPerPage && (
+              <div className="mt-8 flex justify-center">
+                <nav className="flex items-center">
+                  <button 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 border border-gray-300 rounded-l-md ${currentPage === 1 ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+                  >
+                    Previous
+                  </button>
+                  {Array.from({ length: Math.ceil(filteredProducts.length / productsPerPage) }).map((_, index) => (
+                    <button 
+                      key={index}
+                      onClick={() => setCurrentPage(index + 1)}
+                      className={`px-3 py-1 border-t border-b border-gray-300 ${currentPage === index + 1 ? 'bg-amber-600 text-white' : 'hover:bg-gray-100'}`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                  <button 
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredProducts.length / productsPerPage)))}
+                    disabled={currentPage === Math.ceil(filteredProducts.length / productsPerPage)}
+                    className={`px-3 py-1 border border-gray-300 rounded-r-md ${currentPage === Math.ceil(filteredProducts.length / productsPerPage) ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+                  >
+                    Next
+                  </button>
+                </nav>
+              </div>
+            )}
           </div>
         </div>
       </div>
