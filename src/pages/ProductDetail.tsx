@@ -1,74 +1,114 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ShoppingCartIcon, HeartIcon, ShareIcon, StarIcon, TruckIcon, ShieldCheckIcon, RefreshCwIcon, CheckIcon, MinusIcon, PlusIcon, ChevronRightIcon } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import ProductCard from '../components/products/ProductCard';
 import { useCart } from '../contexts/CartContext';
+import { products } from '../data/Products';
+
+// Define the product type based on our data structure
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  rating: number;
+  reviewCount: number;
+  category: string;
+  description?: string;
+  features?: string[];
+  specifications?: Record<string, string>;
+  images?: string[];
+  discount?: number;
+  isNew?: boolean;
+  isFeatured?: boolean;
+}
+
+// Default product data for fallback
+const defaultProduct: Product = {
+  id: '',
+  name: 'Product Not Found',
+  price: 0,
+  image: 'https://via.placeholder.com/800x600?text=Product+Not+Found',
+  rating: 0,
+  reviewCount: 0,
+  category: '',
+  description: 'The requested product could not be found. It may have been removed or is temporarily unavailable.',
+  features: [
+    'Please check the product ID in the URL',
+    'Try browsing our catalog for similar products',
+    'Contact support if you need assistance'
+  ],
+  specifications: {
+    Status: 'Not Available',
+    'Last Checked': new Date().toLocaleDateString()
+  },
+  images: ['https://via.placeholder.com/800x600?text=Product+Not+Found']
+};
+
 const ProductDetail = () => {
   const [mainImage, setMainImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
-  // Sample product data
-  const product = {
-    id: '1',
-    name: 'Premium Portland Cement (50kg)',
-    price: 12.99,
-    discount: 0,
-    rating: 4.5,
-    reviewCount: 128,
-    stock: 50,
-    sku: 'CM-PORT-50KG',
-    brand: 'BuildWell',
-    category: 'Cement',
-    tags: ['cement', 'building materials', 'construction'],
-    description: 'High-quality Portland cement suitable for general construction work. This premium cement offers excellent binding properties, durability, and strength for various construction applications including concrete mixing, mortar preparation, and plastering.',
-    features: ['High strength development', 'Excellent workability', '50kg standard packaging', 'Consistent quality', 'Suitable for all general construction work', 'Complies with international standards'],
-    specifications: {
-      Weight: '50kg',
-      Type: 'Portland Cement',
-      'Strength Class': '42.5N',
-      'Setting Time': '45-60 minutes',
-      Application: 'General Construction',
-      Storage: 'Keep in dry place',
-      'Shelf Life': '3 months when properly stored'
-    },
-    images: ['https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1607999976047-0867e570e501?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1580488741163-9a6683a2aff0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1585073759066-29214468eee3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80']
-  };
-  // Sample related products
-  const relatedProducts = [{
-    id: '2',
-    name: 'Red Clay Bricks (Pack of 500)',
-    price: 249.99,
-    image: 'https://images.unsplash.com/photo-1618501352097-8f0a64a2a673?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-    rating: 4.8,
-    reviewCount: 94,
-    category: 'Bricks'
-  }, {
-    id: '5',
-    name: 'Ceramic Floor Tiles (60x60cm, Pack of 10)',
-    price: 89.99,
-    image: 'https://images.unsplash.com/photo-1560343776-97e7d202ff0e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-    rating: 4.4,
-    reviewCount: 56,
-    category: 'Tiles'
-  }, {
-    id: '6',
-    name: 'Steel Reinforcement Bars (10mm, Bundle of 10)',
-    price: 149.99,
-    image: 'https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-    rating: 4.9,
-    reviewCount: 42,
-    category: 'Steel'
-  }, {
-    id: '7',
-    name: 'PVC Pipes (2 inch, 10ft, Pack of 5)',
-    price: 35.99,
-    image: 'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-    rating: 4.3,
-    reviewCount: 38,
-    category: 'Plumbing'
-  }];
+  const [product, setProduct] = useState<Product>({ ...defaultProduct });
+  const [loading, setLoading] = useState(true);
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Reset loading state when component mounts or ID changes
+    setLoading(true);
+    
+    // Simulate API call with timeout
+    const timer = setTimeout(() => {
+      if (id) {
+        // Find the product with the matching ID
+        const foundProduct = products.find(p => p.id === id);
+        
+        if (foundProduct) {
+          // Enhance the product with additional details
+          const enhancedProduct: Product = {
+            ...foundProduct,
+            // Ensure we have at least one image
+            images: foundProduct.images || [foundProduct.image],
+            // Add default description if missing
+            description: foundProduct.description || `High-quality ${foundProduct.category.toLowerCase()} for your construction needs.`,
+            // Add default features if missing
+            features: foundProduct.features || [
+              `Premium ${foundProduct.category.toLowerCase()} quality`,
+              'Durable and long-lasting',
+              'Suitable for various applications',
+              'Meets industry standards'
+            ],
+            // Add default specifications if missing
+            specifications: foundProduct.specifications || {
+              'Material': foundProduct.category,
+              'Brand': foundProduct.brand || 'BuildWell',
+              'Weight': 'Varies by product',
+              'Application': 'General Construction',
+              'Warranty': 'Manufacturer warranty included'
+            }
+          };
+          setProduct(enhancedProduct);
+        } else {
+          // If product not found, set default and show not found message
+          setProduct({
+            ...defaultProduct,
+            id: id || 'unknown',
+            name: `Product #${id} Not Found`
+          });
+        }
+      }
+      setLoading(false);
+    }, 300); // Simulate network delay
+
+    return () => clearTimeout(timer);
+  }, [id]);
+  // Get related products (filter out current product and get products from same category)
+  const relatedProducts = products
+    .filter(p => p.id !== product.id && p.category === product.category)
+    .slice(0, 4); // Limit to 4 related products
   // Sample reviews
   const reviews = [{
     id: 1,
@@ -106,7 +146,6 @@ const ProductDetail = () => {
 
   // Use cart context and navigation
   const { addToCart } = useCart();
-  const navigate = useNavigate();
   const [isAdded, setIsAdded] = useState(false);
 
   // Handle add to cart
@@ -220,17 +259,26 @@ const ProductDetail = () => {
               <div className="space-y-2 mb-6">
                 <div className="flex">
                   <span className="text-gray-600 w-24">Availability:</span>
-                  {product.stock > 0 ? <span className="text-green-600 flex items-center">
-                      <CheckIcon className="h-4 w-4 mr-1" /> In Stock (
-                      {product.stock} available)
-                    </span> : <span className="text-red-600">Out of Stock</span>}
+                  {(product.stock || 0) > 0 ? (
+                    <span className="text-green-600 flex items-center">
+                      <CheckIcon className="h-4 w-4 mr-1" /> In Stock
+                      {product.stock !== undefined && `(${product.stock} available)`}
+                    </span>
+                  ) : (
+                    <span className="text-red-600">Out of Stock</span>
+                  )}
                 </div>
-                <div className="flex">
-                  <span className="text-gray-600 w-24">Brand:</span>
-                  <Link to={`/products?brand=${product.brand.toLowerCase()}`} className="text-amber-600 hover:underline">
-                    {product.brand}
-                  </Link>
-                </div>
+                {product.brand && (
+                  <div className="flex">
+                    <span className="text-gray-600 w-24">Brand:</span>
+                    <Link 
+                      to={`/products?brand=${(product.brand || '').toLowerCase()}`} 
+                      className="text-amber-600 hover:underline"
+                    >
+                      {product.brand}
+                    </Link>
+                  </div>
+                )}
                 <div className="flex">
                   <span className="text-gray-600 w-24">SKU:</span>
                   <span>{product.sku}</span>

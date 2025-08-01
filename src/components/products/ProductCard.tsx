@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ShoppingCartIcon, StarIcon, CheckIcon } from 'lucide-react';
 import Button from '../ui/Button';
 import { useCart } from '../../contexts/CartContext';
@@ -41,8 +41,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const { addToCart } = useCart();
   const [isAdded, setIsAdded] = useState(false);
 
+  const navigate = useNavigate();
+
   // Handle add to cart
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent navigation when clicking add to cart
     addToCart({
       id,
       name,
@@ -55,30 +58,28 @@ const ProductCard: React.FC<ProductCardProps> = ({
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
   };
-  return <div className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden transition-all hover:shadow-md">
-      {/* Badge */}
-      {(isNew || discount) && <div className="absolute top-2 left-2 z-10">
-          {isNew && <span className="inline-block bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-md mr-2">
-              NEW
-            </span>}
-          {discount && <span className="inline-block bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-md">
-              {discount}% OFF
-            </span>}
-        </div>}
+
+  // Navigate to product detail page when card is clicked
+  const handleCardClick = () => {
+    navigate(`/product/${id}`);
+  };
+
+  return (
+    <div 
+      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col cursor-pointer"
+      onClick={handleCardClick}
+    >
+
       {/* Image */}
-      <Link to={`/product/${id}`} className="block overflow-hidden">
-        <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-100">
-          <img src={image} alt={name} className="h-48 w-full object-cover object-center group-hover:opacity-90 transition-opacity" />
-        </div>
-      </Link>
+      <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-100">
+        <img src={image} alt={name} className="h-48 w-full object-cover object-center group-hover:opacity-90 transition-opacity" />
+      </div>
       {/* Content */}
-      <div className="p-4">
-        <Link to={`/product/${id}`}>
-          <h3 className="text-sm text-gray-500 mb-1">{category}</h3>
-          <h2 className="text-base font-medium text-gray-900 mb-1 line-clamp-2 min-h-[2.5rem]">
-            {name}
-          </h2>
-        </Link>
+      <div className="p-4 flex-grow">
+        <h3 className="text-sm text-gray-500 mb-1">{category}</h3>
+        <h2 className="text-base font-medium text-gray-900 mb-1 line-clamp-2 min-h-[2.5rem]">
+          {name}
+        </h2>
         {/* Price */}
         <div className="mt-2 mb-2">
           {discount ? <div className="flex items-center">
@@ -100,17 +101,21 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <span className="ml-1 text-xs text-gray-500">({reviewCount})</span>
         </div>
         {/* Add to cart button */}
-        <Button 
-          variant="primary" 
-          size="sm" 
-          fullWidth 
-          icon={isAdded ? <CheckIcon className="h-4 w-4" /> : <ShoppingCartIcon className="h-4 w-4" />}
-          onClick={handleAddToCart}
+        <Button
+          variant="primary"
+          size="sm"
+          className="w-full mt-2"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleAddToCart(e);
+          }}
           disabled={isAdded}
         >
           {isAdded ? 'Added to Cart' : 'Add to Cart'}
         </Button>
       </div>
-    </div>;
+    </div>
+  );
 };
 export default ProductCard;

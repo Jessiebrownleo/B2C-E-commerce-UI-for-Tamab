@@ -1,17 +1,62 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import Card from '../components/ui/Card';
 import { UserIcon, PackageIcon, MapPinIcon, HeartIcon, BellIcon, LogOutIcon, ShoppingBagIcon, CreditCardIcon, ChevronRightIcon, StarIcon, TruckIcon } from 'lucide-react';
 import Button from '../components/ui/Button';
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  role: string;
+}
+
 const Account = () => {
-  // Sample data - in a real app, this would come from an API
-  const user = {
-    name: 'Sopheak Chen',
-    email: 'sopheak.chen@example.com',
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-    memberSince: 'January 2023',
-    totalOrders: 12
+  const navigate = useNavigate();
+  const [user, setUser] = useState<UserData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [memberSince] = useState('January 2023'); // Keeping this static for now
+  const [totalOrders] = useState(12); // Keeping this static for now
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const isAuthenticated = localStorage.getItem('isAuthenticated');
+    const userData = localStorage.getItem('user');
+    
+    if (!isAuthenticated || !userData) {
+      toast.error('Please log in to view your account');
+      navigate('/login');
+      return;
+    }
+    
+    try {
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      toast.error('Error loading user data');
+      navigate('/login');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('user');
+    toast.success('Successfully logged out');
+    navigate('/login');
   };
+
+  if (isLoading || !user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500"></div>
+      </div>
+    );
+  }
   const recentOrders = [{
     id: 'ORD-2023-1234',
     date: '2023-11-15',
@@ -60,27 +105,45 @@ const Account = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="relative">
-                {user.avatar ? <img src={user.avatar} alt={user.name} className="w-16 h-16 rounded-full object-cover" /> : <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center">
+                {user.avatar ? (
+                  <img 
+                    src={user.avatar} 
+                    alt={user.name} 
+                    className="w-16 h-16 rounded-full object-cover" 
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center">
                     <UserIcon className="w-8 h-8 text-amber-600" />
-                  </div>}
-                <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {user.name}
-                </h1>
-                <p className="text-gray-600">{user.email}</p>
-                <p className="text-sm text-gray-500">
-                  Member since {user.memberSince}
-                </p>
+                  </div>
+                )}
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-lg font-medium text-gray-900">{user.name}</h3>
+                    {user.role === 'admin' && (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                        Admin
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-gray-600">{user.email}</p>
+                  <p className="text-sm text-gray-500">
+                    Member since {user.memberSince}
+                  </p>
+                </div>
               </div>
             </div>
             <div className="flex space-x-3">
               <Button variant="outline" size="sm" icon={<BellIcon className="w-4 h-4" />}>
                 Notifications
               </Button>
-              <Button variant="outline" size="sm" icon={<LogOutIcon className="w-4 h-4" />}>
-                Sign Out
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-4"
+                onClick={handleLogout}
+              >
+                <LogOutIcon className="w-4 h-4 mr-2" />
+                Log out
               </Button>
             </div>
           </div>
@@ -95,7 +158,7 @@ const Account = () => {
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Total Orders</p>
                 <h3 className="text-xl font-bold text-gray-900">
-                  {user.totalOrders}
+                  {totalOrders}
                 </h3>
               </div>
             </div>

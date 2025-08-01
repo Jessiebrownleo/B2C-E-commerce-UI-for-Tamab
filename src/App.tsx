@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -17,11 +19,23 @@ import Terms from './pages/Terms';
 import ReturnPolicy from './pages/ReturnPolicy';
 import NotFound from './pages/NotFound';
 import { CartProvider } from './contexts/CartContext';
+
 export function App() {
   return (
     <CartProvider>
       <Router basename="/">
         <div className="flex flex-col min-h-screen bg-gray-50">
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
           <Header />
           <main className="flex-grow">
             <Routes>
