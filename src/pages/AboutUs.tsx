@@ -88,10 +88,10 @@ const AboutUs = () => {
             {/* Team Member 1 */}
             <div className="text-center">
               <div className="relative mb-4">
-                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="CEO" className="w-48 h-48 rounded-full mx-auto object-cover" />
+                <img src="/images/soben.jpg" alt="CEO" className="w-48 h-48 rounded-full mx-auto object-cover" />
               </div>
               <h3 className="text-lg font-medium text-gray-900">
-                Sopheak Chheng
+                On Soben
               </h3>
               <p className="text-amber-600 mb-2">Chief Executive Officer</p>
               <p className="text-gray-600 text-sm">
@@ -102,10 +102,10 @@ const AboutUs = () => {
             {/* Team Member 2 */}
             <div className="text-center">
               <div className="relative mb-4">
-                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="COO" className="w-48 h-48 rounded-full mx-auto object-cover" />
+                <img src="/images/limhai.jpg" alt="COO" className="w-48 h-48 rounded-full mx-auto object-cover" />
               </div>
               <h3 className="text-lg font-medium text-gray-900">
-                Channary Sok
+                Lun Limhai
               </h3>
               <p className="text-amber-600 mb-2">Chief Operations Officer</p>
               <p className="text-gray-600 text-sm">
@@ -116,9 +116,9 @@ const AboutUs = () => {
             {/* Team Member 3 */}
             <div className="text-center">
               <div className="relative mb-4">
-                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Technical Director" className="w-48 h-48 rounded-full mx-auto object-cover" />
+                <img src="/images/bunthoeun.jpg" alt="Technical Director" className="w-48 h-48 rounded-full mx-auto object-cover" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900">Vuthy Tep</h3>
+              <h3 className="text-lg font-medium text-gray-900">Nath Bunthoeun</h3>
               <p className="text-amber-600 mb-2">Technical Director</p>
               <p className="text-gray-600 text-sm">
                 Ensuring product quality and technical excellence across all
@@ -128,9 +128,9 @@ const AboutUs = () => {
             {/* Team Member 4 */}
             <div className="text-center">
               <div className="relative mb-4">
-                <img src="https://images.unsplash.com/photo-1551836022-deb4988cc6c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Sales Director" className="w-48 h-48 rounded-full mx-auto object-cover" />
+                <img src="/images/lay.jpg" alt="Sales Director" className="w-48 h-48 rounded-full mx-auto object-cover" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900">Virak Meas</h3>
+              <h3 className="text-lg font-medium text-gray-900">Lang Lay</h3>
               <p className="text-amber-600 mb-2">Sales Director</p>
               <p className="text-gray-600 text-sm">
                 Driving business growth and managing key client relationships.
