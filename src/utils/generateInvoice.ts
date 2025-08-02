@@ -123,6 +123,19 @@ export const generateInvoice = (data: InvoiceData): string => {
   `;
 };
 
+/**
+ * Returns the invoice HTML as a string that can be used for email or display
+ * @param invoiceHtml The HTML string of the invoice
+ * @returns The same HTML string for chaining or further processing
+ */
+export const getInvoiceHtml = (invoiceHtml: string): string => {
+  return invoiceHtml;
+};
+
+/**
+ * Opens the invoice in a new browser tab
+ * @param invoiceHtml The HTML string of the invoice
+ */
 export const openInvoiceInNewTab = (invoiceHtml: string) => {
   const blob = new Blob([invoiceHtml], { type: 'text/html' });
   const url = URL.createObjectURL(blob);

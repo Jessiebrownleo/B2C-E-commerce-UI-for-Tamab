@@ -12,6 +12,7 @@ const Checkout = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [invoiceHtml, setInvoiceHtml] = useState<string | null>(null);
 
   // Use cart context and navigation
   const { cartItems, getCartTotal, clearCart } = useCart();
@@ -74,9 +75,9 @@ const Checkout = () => {
       orderNotes: (document.getElementById('orderNotes') as HTMLTextAreaElement)?.value || ''
     };
 
-    // Generate invoice
+    // Generate invoice HTML
     const orderId = generateOrderId();
-    const invoiceHtml = generateInvoice({
+    const generatedInvoiceHtml = generateInvoice({
       orderId,
       date: new Date().toLocaleDateString('en-US', { 
         year: 'numeric', 
@@ -92,8 +93,14 @@ const Checkout = () => {
       shippingAddress: `${formData.address}, ${formData.city}, ${formData.country} ${formData.postalCode}`
     });
 
+    // Store the invoice HTML in state for email purposes
+    setInvoiceHtml(generatedInvoiceHtml);
+    
     // In a real application, you would submit the order to a backend here
-    // For demo purposes, we'll just show the invoice
+    // and send the invoice via email
+    console.log('Invoice HTML for email:', generatedInvoiceHtml);
+    
+    // For demo purposes, we'll show the invoice in a new tab
     setTimeout(() => {
       // Clear the cart
       clearCart();
@@ -103,7 +110,10 @@ const Checkout = () => {
       setIsSubmitting(false);
       
       // Open invoice in new tab
-      openInvoiceInNewTab(invoiceHtml);
+      openInvoiceInNewTab(generatedInvoiceHtml);
+      
+      // In a real implementation, you would send the email here
+      // Example: sendEmail(customerEmail, 'Your Order Invoice', generatedInvoiceHtml);
       
       // Redirect to home after a delay
       setTimeout(() => {
