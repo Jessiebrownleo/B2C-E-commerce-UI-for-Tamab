@@ -8,30 +8,11 @@ const Cart = () => {
   // Use cart context
   const { cartItems, updateQuantity, removeFromCart, clearCart, getCartTotal } = useCart();
 
-  const [couponCode, setCouponCode] = useState('');
-  const [couponApplied, setCouponApplied] = useState(false);
-  const [couponDiscount, setCouponDiscount] = useState(0);
-
   // Calculate subtotal
   const subtotal = getCartTotal();
 
   // Shipping cost calculation
   const shippingCost = subtotal >= 500 ? 0 : 25;
-
-  // Apply coupon
-  const applyCoupon = () => {
-    if (couponCode.toUpperCase() === 'TAMAB20') {
-      setCouponApplied(true);
-      setCouponDiscount(subtotal * 0.2);
-    }
-  };
-
-  // Reset coupon when subtotal changes
-  useEffect(() => {
-    if (couponApplied) {
-      setCouponDiscount(subtotal * 0.2);
-    }
-  }, [subtotal, couponApplied]);
 
   // Handle quantity update
   const handleUpdateQuantity = (id, newQuantity) => {
@@ -47,9 +28,6 @@ const Cart = () => {
   // Handle clear cart
   const handleClearCart = () => {
     clearCart();
-    setCouponApplied(false);
-    setCouponDiscount(0);
-    setCouponCode('');
   };
   return <div className="bg-gray-50 w-full min-h-screen">
       {/* Page Header */}
@@ -164,33 +142,12 @@ const Cart = () => {
                         ${shippingCost.toFixed(2)}
                       </span> : <span className="text-green-600 font-medium">Free</span>}
                   </div>
-                  {couponApplied && <div className="flex justify-between text-green-600">
-                      <span>Coupon Discount (TAMAB20)</span>
-                      <span className="font-medium">
-                        -${couponDiscount.toFixed(2)}
-                      </span>
-                    </div>}
                   <div className="border-t border-gray-200 pt-3 flex justify-between font-bold text-base">
                     <span>Total</span>
                     <span>
-                      ${(subtotal + shippingCost - couponDiscount).toFixed(2)}
+                      ${(subtotal + shippingCost).toFixed(2)}
                     </span>
                   </div>
-                </div>
-                {/* Coupon Code */}
-                <div className="mb-6">
-                  <label htmlFor="coupon" className="block text-sm font-medium text-gray-700 mb-2">
-                    Coupon Code
-                  </label>
-                  <div className="flex">
-                    <input type="text" id="coupon" value={couponCode} onChange={e => setCouponCode(e.target.value)} placeholder="Enter coupon code" className="flex-1 border border-gray-300 rounded-l-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
-                    <button onClick={applyCoupon} disabled={couponApplied} className={`px-4 py-2 bg-amber-600 text-white rounded-r-md text-sm font-medium ${couponApplied ? 'opacity-50 cursor-not-allowed' : 'hover:bg-amber-700'}`}>
-                      Apply
-                    </button>
-                  </div>
-                  {couponApplied && <p className="mt-1 text-sm text-green-600">
-                      Coupon applied successfully!
-                    </p>}
                 </div>
                 {/* Checkout Button */}
                 <Link to="/checkout">

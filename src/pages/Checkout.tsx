@@ -4,6 +4,7 @@ import { CreditCardIcon, ShieldCheckIcon, ChevronDownIcon, CheckIcon, TruckIcon,
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import { useCart } from '../contexts/CartContext';
+import { generateInvoice, openInvoiceInNewTab } from '../utils/generateInvoice';
 const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState('aba');
   const [deliveryMethod, setDeliveryMethod] = useState('standard');
@@ -29,25 +30,85 @@ const Checkout = () => {
   const shippingCost = deliveryMethod === 'express' ? 35 : subtotal >= 500 ? 0 : 25;
   const total = subtotal + shippingCost;
 
+  // Generate a random order ID
+  const generateOrderId = () => {
+    return 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+  };
+
   // Handle place order
   const handlePlaceOrder = () => {
-    // In a real application, you would validate the form and submit the order to a backend
+    // Basic form validation
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'country', 'postalCode'];
+    const errors = {};
+    
+    requiredFields.forEach(field => {
+      const input = document.getElementById(field) as HTMLInputElement;
+      if (input && !input.value.trim()) {
+        errors[field] = 'This field is required';
+      }
+    });
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (!termsAccepted) {
+      alert('Please accept the terms and conditions');
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate API call
+    // Get form values
+    const formData = {
+      firstName: (document.getElementById('firstName') as HTMLInputElement)?.value || '',
+      lastName: (document.getElementById('lastName') as HTMLInputElement)?.value || '',
+      email: (document.getElementById('email') as HTMLInputElement)?.value || '',
+      phone: (document.getElementById('phone') as HTMLInputElement)?.value || '',
+      address: (document.getElementById('address') as HTMLInputElement)?.value || '',
+      city: (document.getElementById('city') as HTMLInputElement)?.value || '',
+      country: (document.getElementById('country') as HTMLInputElement)?.value || '',
+      postalCode: (document.getElementById('postalCode') as HTMLInputElement)?.value || '',
+      orderNotes: (document.getElementById('orderNotes') as HTMLTextAreaElement)?.value || ''
+    };
+
+    // Generate invoice
+    const orderId = generateOrderId();
+    const invoiceHtml = generateInvoice({
+      orderId,
+      date: new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }),
+      items: cartItems,
+      subtotal,
+      shipping: shippingCost,
+      total,
+      customerName: `${formData.firstName} ${formData.lastName}`,
+      customerEmail: formData.email,
+      shippingAddress: `${formData.address}, ${formData.city}, ${formData.country} ${formData.postalCode}`
+    });
+
+    // In a real application, you would submit the order to a backend here
+    // For demo purposes, we'll just show the invoice
     setTimeout(() => {
       // Clear the cart
       clearCart();
-
-      // Show success message or redirect to confirmation page
+      
+      // Show success message
       setOrderPlaced(true);
       setIsSubmitting(false);
-
-      // In a real application, you would redirect to an order confirmation page
-      // For now, we'll redirect to the home page after a delay
+      
+      // Open invoice in new tab
+      openInvoiceInNewTab(invoiceHtml);
+      
+      // Redirect to home after a delay
       setTimeout(() => {
         navigate('/', { state: { orderPlaced: true } });
-      }, 3000);
+      }, 5000);
     }, 2000);
   };
   return <div className="bg-gray-50 w-full min-h-screen">
