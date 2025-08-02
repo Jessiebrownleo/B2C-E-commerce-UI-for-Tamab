@@ -27,7 +27,7 @@ const Header = () => {
       navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
-  return <header className="w-full bg-white shadow-sm">
+  return <header className="w-full sticky bg-white shadow-sm">
       {/* Top bar */}
       <div className="bg-stone-800 text-white py-2">
         <div className="container mx-auto px-4 flex flex-col sm:flex-row justify-between items-center text-sm">
