@@ -4,80 +4,41 @@ import { TruckIcon, ShieldCheckIcon, CreditCardIcon, HeadphonesIcon, ArrowRightI
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import ProductCard from '../components/products/ProductCard';
+
+import products from '../data/Products';
 const Home = () => {
-  // Sample data for featured products
-  const featuredProducts = [{
-    id: '1',
-    name: 'Premium Portland Cement (50kg)',
-    price: 12.99,
-    image: 'https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-    rating: 4.5,
-    reviewCount: 128,
-    category: 'Cement',
-    isFeatured: true
-  }, {
-    id: '2',
-    name: 'Red Clay Bricks (Pack of 500)',
-    price: 249.99,
-    image: 'https://images.unsplash.com/photo-1618501352097-8f0a64a2a673?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-    rating: 4.8,
-    reviewCount: 94,
-    category: 'Bricks',
-    isFeatured: true
-  }, {
-    id: '3',
-    name: 'Professional Cordless Drill Set',
-    price: 189.99,
-    image: 'https://images.unsplash.com/photo-1580901368919-7738efb0f87e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-    rating: 4.7,
-    reviewCount: 215,
-    category: 'Tools',
-    isNew: true,
-    discount: 15
-  }, {
-    id: '4',
-    name: 'Premium Interior Wall Paint (5L)',
-    price: 45.99,
-    image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-    rating: 4.6,
-    reviewCount: 87,
-    category: 'Paint',
-    isFeatured: true
-  }];
-  // Sample categories
   const categories = [{
     id: 'cement',
     name: 'Cement',
-    image: 'https://images.unsplash.com/photo-1617419250411-98aa962b070f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+    image: 'https://singaporesedekah.com/cdn/shop/files/image-removebg-preview_e0b84e50-8dcd-422a-b795-8159500baa0e.png?v=1721300067',
     count: 24
   }, {
     id: 'bricks',
     name: 'Bricks & Blocks',
-    image: 'https://images.unsplash.com/photo-1618501352097-8f0a64a2a673?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+    image: 'https://mobileimages.lowes.com/productimages/4d55aa9a-b645-48ec-9a9e-7e6480283eea/02592174.jpg',
     count: 36
   }, {
     id: 'tiles',
     name: 'Tiles',
-    image: 'https://images.unsplash.com/photo-1560343776-97e7d202ff0e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnRpicQkiSPeq3C4YfcU_C1oKN26NbgH1gvg&s',
     count: 48
   }, {
     id: 'steel',
     name: 'Steel',
-    image: 'https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+    image: 'https://www.servicesteel.org/wp-content/uploads/2021/07/shapes.jpg',
     count: 18
   }, {
     id: 'plumbing',
     name: 'Plumbing',
-    image: 'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+    image: 'https://assets-news.housing.com/news/wp-content/uploads/2022/10/14180445/plumbing-materials3.png',
     count: 42
   }, {
     id: 'tools',
     name: 'Tools',
-    image: 'https://images.unsplash.com/photo-1581166397057-235af2b3c6dd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+    image: 'https://jcblhandtools.com/wp-content/uploads/2024/12/Guide-to-Workshop-Hand-Tools-2.webp',
     count: 64
   }];
-  // Sample brands
-  const brands = ['https://via.placeholder.com/150x80?text=Brand+1', 'https://via.placeholder.com/150x80?text=Brand+2', 'https://via.placeholder.com/150x80?text=Brand+3', 'https://via.placeholder.com/150x80?text=Brand+4', 'https://via.placeholder.com/150x80?text=Brand+5', 'https://via.placeholder.com/150x80?text=Brand+6'];
+  const brands = ['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Tesla_logo.png/1200px-Tesla_logo.png', 'https://upload.wikimedia.org/wikipedia/en/thumb/4/47/FC_Barcelona_%28crest%29.svg/640px-FC_Barcelona_%28crest%29.svg.png', 'https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/800px-Real_Madrid_CF.svg.png', 'https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Manchester_City_FC_badge.svg/1200px-Manchester_City_FC_badge.svg.png', 'https://upload.wikimedia.org/wikipedia/en/thumb/7/7a/Manchester_United_FC_crest.svg/1200px-Manchester_United_FC_crest.svg.png', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsghnii_mjAgHGPCuldAbWgYao-SIf72dXQg&s'];
   return <div className="bg-gray-50 w-full">
       {/* Hero Section */}
       <section className="relative bg-stone-800 text-white">
@@ -190,7 +151,7 @@ const Home = () => {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map(product => <ProductCard key={product.id} {...product} />)}
+            {products.slice(0, 4).map(product => <ProductCard key={product.id} {...product} />)}
           </div>
         </div>
       </section>
@@ -396,7 +357,7 @@ const Home = () => {
             </Card>
             {/* Blog Post 3 */}
             <Card className="overflow-hidden" padding="none">
-              <img src="https://images.unsplash.com/photo-1581165825597-9aaedcbacfe6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Blog post" className="w-full h-48 object-cover" />
+              <img src="https://hips.hearstapps.com/hmg-prod/images/white-kitchen-tile-floor-663e73179c3c4.jpg?crop=0.668xw:1.00xh;0.0545xw,0&resize=1200:*" alt="Blog post" className="w-full h-48 object-cover" />
               <div className="p-5">
                 <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
                   Guide

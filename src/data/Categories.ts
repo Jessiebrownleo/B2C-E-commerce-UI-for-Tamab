@@ -1,5 +1,5 @@
 // Categories data as JSON
-export const categoriesData = [
+export const categories = [
     { id: 'all', name: 'All Categories', count: 0 },
     { id: 'cement', name: 'Cement', count: 3 },
     { id: 'bricks', name: 'Bricks & Blocks', count: 3 },
@@ -13,3 +13,5 @@ export const categoriesData = [
     { id: 'insulation', name: 'Insulation', count: 2 },
     { id: 'lumber', name: 'Lumber', count: 2 }
 ];
+
+export default categories;

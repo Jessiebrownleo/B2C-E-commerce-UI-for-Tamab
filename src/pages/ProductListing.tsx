@@ -4,8 +4,8 @@ import { FilterIcon, XIcon, ChevronDownIcon, GridIcon, ListIcon, SlidersIcon, St
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import ProductCard from '../components/products/ProductCard';
-import {products} from "../data/Products.ts";
-import {categoriesData} from "../data/Categories.ts";
+import products from "../data/Products.ts";
+import categories from "../data/Categories.ts";
 const ProductListing = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -121,7 +121,7 @@ const ProductListing = () => {
               <div className="mb-6">
                 <h3 className="font-medium mb-3">Categories</h3>
                 <div className="space-y-2">
-                  {categoriesData.map((category) => (
+                  {categories.map((category) => (
                     <div key={category.id} className="flex items-center">
                       <input 
                         type="checkbox" 
@@ -159,7 +159,7 @@ const ProductListing = () => {
                 <div className="mb-6">
                   <h3 className="font-medium mb-3">Categories</h3>
                   <div className="space-y-2">
-                    {categoriesData.map((category) => (
+                    {categories.map((category) => (
                       <div key={category.id} className="flex items-center">
                         <input 
                           type="checkbox" 
@@ -228,7 +228,7 @@ const ProductListing = () => {
               {selectedCategories.length > 0 && !selectedCategories.includes('all') && (
                 <>
                   {selectedCategories.map(catId => {
-                    const category = categoriesData.find(c => c.id === catId);
+                    const category = categories.find(c => c.id === catId);
                     return category ? (
                       <div key={catId} className="bg-gray-100 rounded-full px-3 py-1 text-sm flex items-center">
                         Category: {category.name}

@@ -128,31 +128,36 @@ const Checkout = () => {
                     State/Province *
                   </label>
                   <div className="relative">
-                    <select id="state" className="appearance-none w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <select
+                        id="state"
+                        className="appearance-none w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    >
                       <option value="">Select Province/City</option>
                       <option value="PNH">Phnom Penh</option>
+                      <option value="BTB">Battambang</option>
+                      <option value="KCM">Kampong Cham</option>
+                      <option value="KCH">Kampong Chhnang</option>
+                      <option value="KSP">Kampong Speu</option>
+                      <option value="KTS">Kampong Thom</option>
+                      <option value="KZG">Kampot</option>
+                      <option value="KDL">Kandal</option>
+                      <option value="KRA">Kratie</option>
+                      <option value="MON">Mondulkiri</option>
+                      <option value="PVH">Preah Vihear</option>
+                      <option value="PSV">Prey Veng</option>
+                      <option value="PPA">Pursat</option>
+                      <option value="RAT">Ratanakiri</option>
                       <option value="SRP">Siem Reap</option>
                       <option value="SHV">Preah Sihanouk</option>
-                      <option value="BMC">Battambang</option>
-                      <option value="KEP">Kep</option>
-                      <option value="KOS">Kratie</option>
+                      <option value="STG">Stung Treng</option>
+                      <option value="SVR">Svay Rieng</option>
+                      <option value="TKA">Takeo</option>
+                      <option value="ODM">Oddar Meanchey</option>
+                      <option value="KPT">Kep</option>
+                      <option value="PBL">Pailin</option>
+                      <option value="TBN">Tboung Khmum</option>
                     </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                      <ChevronDownIcon className="h-4 w-4 text-gray-500" />
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
-                    Country *
-                  </label>
-                  <div className="relative">
-                    <select id="country" className="appearance-none w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500">
-                      <option value="KH">Cambodia</option>
-                      <option value="TH">Thailand</option>
-                      <option value="VN">Vietnam</option>
-                      <option value="LA">Laos</option>
-                    </select>
+
                     <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                       <ChevronDownIcon className="h-4 w-4 text-gray-500" />
                     </div>
@@ -236,76 +241,10 @@ const Checkout = () => {
                     <div className="flex-1">
                       <div className="flex justify-between">
                         <h3 className="font-medium">ABA Pay</h3>
-                        <img src="https://www.ababank.com/fileadmin/user_upload/aba-logo.png" alt="ABA Pay" className="h-6" />
+                        <img src="https://play-lh.googleusercontent.com/WU6sZMD1UspzwqYnlACtmN60rckp8hoINSgsR21mKLJBbsHPwXtzwvOocpjC7FcO1g" alt="ABA Pay" className="h-6" />
                       </div>
                       <p className="text-sm text-gray-600 mt-1">
                         Pay using ABA Mobile app
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className={`
-                    border rounded-md p-4 cursor-pointer
-                    ${paymentMethod === 'wing' ? 'border-amber-600 bg-amber-50' : 'border-gray-200'}
-                  `} onClick={() => setPaymentMethod('wing')}>
-                  <div className="flex items-center">
-                    <div className={`
-                      w-5 h-5 rounded-full border flex items-center justify-center mr-3
-                      ${paymentMethod === 'wing' ? 'border-amber-600' : 'border-gray-300'}
-                    `}>
-                      {paymentMethod === 'wing' && <div className="w-3 h-3 rounded-full bg-amber-600"></div>}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between">
-                        <h3 className="font-medium">Wing Money</h3>
-                        <img src="https://wing.com.kh/wp-content/uploads/2019/03/wing-logo.png" alt="Wing" className="h-6" />
-                      </div>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Pay using Wing Money app
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className={`
-                    border rounded-md p-4 cursor-pointer
-                    ${paymentMethod === 'pipay' ? 'border-amber-600 bg-amber-50' : 'border-gray-200'}
-                  `} onClick={() => setPaymentMethod('pipay')}>
-                  <div className="flex items-center">
-                    <div className={`
-                      w-5 h-5 rounded-full border flex items-center justify-center mr-3
-                      ${paymentMethod === 'pipay' ? 'border-amber-600' : 'border-gray-300'}
-                    `}>
-                      {paymentMethod === 'pipay' && <div className="w-3 h-3 rounded-full bg-amber-600"></div>}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between">
-                        <h3 className="font-medium">Pi Pay</h3>
-                        <img src="https://play-lh.googleusercontent.com/vQB7RlvyK-ZmgkK-Ox6YrDHjpS9GR3D6yqbdXh6YJHc9GTEinnH3GYbBZoFXYjzFYw" alt="Pi Pay" className="h-6" />
-                      </div>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Pay using Pi Pay app
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className={`
-                    border rounded-md p-4 cursor-pointer
-                    ${paymentMethod === 'truemoney' ? 'border-amber-600 bg-amber-50' : 'border-gray-200'}
-                  `} onClick={() => setPaymentMethod('truemoney')}>
-                  <div className="flex items-center">
-                    <div className={`
-                      w-5 h-5 rounded-full border flex items-center justify-center mr-3
-                      ${paymentMethod === 'truemoney' ? 'border-amber-600' : 'border-gray-300'}
-                    `}>
-                      {paymentMethod === 'truemoney' && <div className="w-3 h-3 rounded-full bg-amber-600"></div>}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between">
-                        <h3 className="font-medium">True Money</h3>
-                        <img src="https://play-lh.googleusercontent.com/MO4jVMbqskWrBD5qWed3Q5gNOK0YX1t4tEWjmtpOyRk0Ql8wHFsXIQP0f2BlZr4hGkc" alt="True Money" className="h-6" />
-                      </div>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Pay using True Money wallet
                       </p>
                     </div>
                   </div>
@@ -324,7 +263,7 @@ const Checkout = () => {
                     <div className="flex-1">
                       <div className="flex justify-between">
                         <h3 className="font-medium">ACLEDA ToanChet</h3>
-                        <img src="https://www.acledabank.com.kh/kh/assets/images/logo.png" alt="ACLEDA" className="h-6" />
+                        <img src="https://www.acledabank.com.kh/kh/assets/download_material/download-logo-blue.jpg" alt="ACLEDA" className="h-6" />
                       </div>
                       <p className="text-sm text-gray-600 mt-1">
                         Pay using ACLEDA ToanChet app
@@ -346,7 +285,7 @@ const Checkout = () => {
                     <div className="flex-1">
                       <div className="flex justify-between">
                         <h3 className="font-medium">Bakong</h3>
-                        <img src="https://www.bakong.gov.kh/wp-content/uploads/2020/10/bakong_logo-1.png" alt="Bakong" className="h-6" />
+                        <img src="https://play-lh.googleusercontent.com/ABNDYwddbqTFpqp809iNq3r9LjrE2qTZ8xFqWmc-iLfHe2vyPAPwZrN_4S1QCFaLDYE" alt="Bakong" className="h-6" />
                       </div>
                       <p className="text-sm text-gray-600 mt-1">
                         Pay using Bakong mobile app

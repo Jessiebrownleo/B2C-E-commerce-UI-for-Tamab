@@ -5,7 +5,7 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import ProductCard from '../components/products/ProductCard';
 import { useCart } from '../contexts/CartContext';
-import { products } from '../data/Products';
+import  products  from '../data/Products';
 
 // Define the product type based on our data structure
 interface Product {
