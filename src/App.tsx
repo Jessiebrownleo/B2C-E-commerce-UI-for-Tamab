@@ -2,8 +2,10 @@ import React, { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import SEO from './components/seo/SEO';
 import Home from './pages/Home';
 import ProductListing from './pages/ProductListing';
 import ProductDetail from './pages/ProductDetail';
@@ -22,8 +24,9 @@ import { CartProvider } from './contexts/CartContext';
 
 export function App() {
   return (
-    <CartProvider>
-      <Router basename="/">
+    <HelmetProvider>
+      <CartProvider>
+        <Router basename="/">
         <div className="flex flex-col min-h-screen bg-gray-50">
           <ToastContainer
             position="top-right"
@@ -36,6 +39,7 @@ export function App() {
             draggable
             pauseOnHover
           />
+          <SEO />
           <Header />
           <main className="flex-grow">
             <Routes>
@@ -60,5 +64,6 @@ export function App() {
         </div>
       </Router>
     </CartProvider>
+    </HelmetProvider>
   );
 }
