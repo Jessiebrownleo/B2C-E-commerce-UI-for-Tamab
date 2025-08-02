@@ -22,7 +22,7 @@ import ReturnPolicy from './pages/ReturnPolicy';
 import NotFound from './pages/NotFound';
 import { CartProvider } from './contexts/CartContext';
 
-export function App() {
+export default function App() {
   return (
     <HelmetProvider>
       <CartProvider>
