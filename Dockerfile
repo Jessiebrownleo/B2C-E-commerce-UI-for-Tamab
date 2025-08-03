@@ -3,7 +3,6 @@ FROM node:22 AS builder
 
 # Set working directory
 WORKDIR /app
-RUN sudo echo "nameserver 8.8.8.8" > /etc/resolv.conf
 # Copy package.json and package-lock.json (or yarn.lock)
 COPY package.json package-lock.json node_modules ./
 # If using Yarn, replace with: COPY package.json yarn.lock ./
