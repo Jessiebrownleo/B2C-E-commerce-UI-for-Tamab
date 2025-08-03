@@ -24,7 +24,8 @@ FROM nginx:alpine
 # Copy built files from the builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 # Adjust the above path if your Vite build output directory is different (e.g., /app/build)
-
+# Copy custom Nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
 # Expose port 80
 EXPOSE 80
 
