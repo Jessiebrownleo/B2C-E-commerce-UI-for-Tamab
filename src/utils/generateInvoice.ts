@@ -19,10 +19,10 @@ export const generateInvoice = (data: InvoiceData): string => {
     const itemPrice = item.discount ? item.price * (1 - item.discount / 100) : item.price;
     return `
       <tr>
-        <td class="border px-4 py-2">${item.name}</td>
-        <td class="border px-4 py-2 text-right">${item.quantity}</td>
-        <td class="border px-4 py-2 text-right">$${itemPrice.toFixed(2)}</td>
-        <td class="border px-4 py-2 text-right">$${(itemPrice * item.quantity).toFixed(2)}</td>
+        <td>${item.name}</td>
+        <td class="text-right">${item.quantity}</td>
+        <td class="text-right">$${itemPrice.toFixed(2)}</td>
+        <td class="text-right">$${(itemPrice * item.quantity).toFixed(2)}</td>
       </tr>
     `;
   }).join('');
@@ -33,87 +33,315 @@ export const generateInvoice = (data: InvoiceData): string => {
     <head>
       <meta charset="UTF-8">
       <title>Invoice #${orderId}</title>
-      <script src="https://cdn.tailwindcss.com"></script>
       <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+          padding: 32px;
+          line-height: 1.6;
+        }
+        
+        .invoice-container {
+          max-width: 800px;
+          margin: 0 auto;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          padding: 32px;
+        }
+        
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 32px;
+          padding-bottom: 16px;
+          border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .company-info h1 {
+          font-size: 28px;
+          font-weight: bold;
+          color: #333;
+          margin-bottom: 8px;
+        }
+        
+        .company-info p {
+          color: #666;
+          font-size: 14px;
+        }
+        
+        .invoice-info {
+          text-align: right;
+        }
+        
+        .invoice-info h2 {
+          font-size: 24px;
+          font-weight: bold;
+          color: #d97706;
+          margin-bottom: 8px;
+        }
+        
+        .invoice-info p {
+          color: #666;
+          margin-bottom: 4px;
+        }
+        
+        .customer-section {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 32px;
+        }
+        
+        .bill-to, .payment-info {
+          flex: 1;
+        }
+        
+        .payment-info {
+          text-align: right;
+        }
+        
+        .section-title {
+          font-size: 18px;
+          font-weight: 600;
+          margin-bottom: 12px;
+          color: #333;
+        }
+        
+        .customer-details p {
+          margin-bottom: 4px;
+          color: #555;
+        }
+        
+        .customer-name {
+          font-weight: 600;
+          color: #333;
+        }
+        
+        .items-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 32px;
+        }
+        
+        .items-table th {
+          background-color: #f8f9fa;
+          padding: 12px;
+          text-align: left;
+          font-weight: 600;
+          color: #333;
+          border: 1px solid #dee2e6;
+        }
+        
+        .items-table th.text-right {
+          text-align: right;
+        }
+        
+        .items-table td {
+          padding: 12px;
+          border: 1px solid #dee2e6;
+          color: #555;
+        }
+        
+        .items-table td.text-right {
+          text-align: right;
+        }
+        
+        .items-table tbody tr:nth-child(even) {
+          background-color: #f8f9fa;
+        }
+        
+        .totals-section {
+          width: 300px;
+          margin-left: auto;
+          margin-bottom: 32px;
+        }
+        
+        .total-row {
+          display: flex;
+          justify-content: space-between;
+          padding: 8px 0;
+          border-bottom: 1px solid #dee2e6;
+        }
+        
+        .total-row.final {
+          font-size: 18px;
+          font-weight: bold;
+          color: #333;
+          border-bottom: 2px solid #333;
+          padding-top: 12px;
+        }
+        
+        .footer {
+          margin-top: 48px;
+          padding-top: 24px;
+          border-top: 1px solid #dee2e6;
+          text-align: center;
+          color: #666;
+          font-size: 14px;
+        }
+        
+        .footer p {
+          margin-bottom: 8px;
+        }
+        
+        .contact-info {
+          margin-top: 16px;
+          font-weight: 600;
+          color: #333;
+        }
+        
+        .print-button {
+          margin-top: 32px;
+          text-align: center;
+        }
+        
+        .print-btn {
+          background-color: #d97706;
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          font-size: 16px;
+          font-weight: 600;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+        }
+        
+        .print-btn:hover {
+          background-color: #b45309;
+        }
+        
         @media print {
-          body { -webkit-print-color-adjust: exact; }
-          .no-print { display: none !important; }
+          body {
+            background-color: white;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+          }
+          
+          .invoice-container {
+            box-shadow: none;
+            padding: 0;
+            max-width: none;
+          }
+          
+          .no-print {
+            display: none !important;
+          }
+        }
+        
+        @media (max-width: 768px) {
+          body {
+            padding: 16px;
+          }
+          
+          .invoice-container {
+            padding: 16px;
+          }
+          
+          .header {
+            flex-direction: column;
+            gap: 16px;
+          }
+          
+          .invoice-info {
+            text-align: left;
+          }
+          
+          .customer-section {
+            flex-direction: column;
+            gap: 24px;
+          }
+          
+          .payment-info {
+            text-align: left;
+          }
+          
+          .totals-section {
+            width: 100%;
+          }
         }
       </style>
     </head>
-    <body class="bg-gray-100 p-8">
-      <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <body>
+      <div class="invoice-container">
         <!-- Header -->
-        <div class="flex justify-between items-center mb-8">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-800">TAMAB CONSTRUCTION</h1>
-            <p class="text-gray-600">Your Trusted Construction Materials Supplier</p>
+        <div class="header">
+          <div class="company-info">
+            <h1>TAMAB CONSTRUCTION</h1>
+            <p>Your Trusted Construction Materials Supplier</p>
           </div>
-          <div class="text-right">
-            <h2 class="text-xl font-bold text-amber-600">INVOICE</h2>
-            <p class="text-gray-600">#${orderId}</p>
-            <p class="text-gray-600">${date}</p>
+          <div class="invoice-info">
+            <h2>INVOICE</h2>
+            <p>#${orderId}</p>
+            <p>${date}</p>
           </div>
         </div>
 
         <!-- Customer Info -->
-        <div class="grid grid-cols-2 gap-8 mb-8">
-          <div>
-            <h3 class="text-lg font-semibold mb-2">Bill To:</h3>
-            <p class="font-medium">${customerName}</p>
-            <p>${customerEmail}</p>
-            <p>${shippingAddress}</p>
+        <div class="customer-section">
+          <div class="bill-to">
+            <h3 class="section-title">Bill To:</h3>
+            <div class="customer-details">
+              <p class="customer-name">${customerName}</p>
+              <p>${customerEmail}</p>
+              <p>${shippingAddress}</p>
+            </div>
           </div>
-          <div class="text-right">
-            <h3 class="text-lg font-semibold mb-2">Payment Method:</h3>
+          <div class="payment-info">
+            <h3 class="section-title">Payment Method:</h3>
             <p>Cash on Delivery</p>
-            <p class="mt-2">Due: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+            <p style="margin-top: 8px;">Due: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
           </div>
         </div>
 
         <!-- Items Table -->
-        <div class="mb-8">
-          <table class="w-full">
-            <thead>
-              <tr class="bg-gray-100">
-                <th class="text-left px-4 py-2">Description</th>
-                <th class="text-right px-4 py-2">Qty</th>
-                <th class="text-right px-4 py-2">Unit Price</th>
-                <th class="text-right px-4 py-2">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsHtml}
-            </tbody>
-          </table>
-        </div>
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th class="text-right">Qty</th>
+              <th class="text-right">Unit Price</th>
+              <th class="text-right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsHtml}
+          </tbody>
+        </table>
 
         <!-- Totals -->
-        <div class="ml-auto w-64">
-          <div class="flex justify-between py-2 border-b">
+        <div class="totals-section">
+          <div class="total-row">
             <span>Subtotal:</span>
             <span>$${subtotal.toFixed(2)}</span>
           </div>
-          <div class="flex justify-between py-2 border-b">
+          <div class="total-row">
             <span>Shipping:</span>
             <span>${shipping > 0 ? `$${shipping.toFixed(2)}` : 'FREE'}</span>
           </div>
-          <div class="flex justify-between py-2 text-lg font-bold">
+          <div class="total-row final">
             <span>Total:</span>
             <span>$${total.toFixed(2)}</span>
           </div>
         </div>
 
         <!-- Footer -->
-        <div class="mt-12 pt-6 border-t text-center text-gray-600 text-sm">
+        <div class="footer">
           <p>Thank you for your business!</p>
-          <p class="mt-2">If you have any questions about this invoice, please contact our support team.</p>
-          <p class="mt-4">TAMAB CONSTRUCTION • support@tamab.com • +855 23 456 789</p>
+          <p>If you have any questions about this invoice, please contact our support team.</p>
+          <p class="contact-info">TAMAB CONSTRUCTION • support@tamab.com • +855 23 456 789</p>
         </div>
 
         <!-- Print Button -->
-        <div class="mt-8 text-center no-print">
-          <button onclick="window.print()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-6 rounded">
+        <div class="print-button no-print">
+          <button onclick="window.print()" class="print-btn">
             Print Invoice
           </button>
         </div>
