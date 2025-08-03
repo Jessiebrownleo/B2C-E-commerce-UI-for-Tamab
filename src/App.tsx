@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -26,7 +26,6 @@ export default function App() {
   return (
     <HelmetProvider>
       <CartProvider>
-        <Router basename="/">
         <div className="flex flex-col min-h-screen bg-gray-50">
           <ToastContainer
             position="top-right"
@@ -43,27 +42,31 @@ export default function App() {
           <Header />
           <main className="flex-grow">
             <Routes>
+              {/* SSR Routes - SEO Critical */}
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<ProductListing />} />
               <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/about-us" element={<AboutUs />} />
+              <Route path="/contact-us" element={<ContactUs />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/return-policy" element={<ReturnPolicy />} />
+              
+              {/* CSR Routes - Interactive */}
+              <Route path="/faq" element={<FAQ />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/account/*" element={<Account />} />
-              <Route path="/about-us" element={<AboutUs />} />
-              <Route path="/contact-us" element={<ContactUs />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/return-policy" element={<ReturnPolicy />} />
+              
+              {/* Error Routes */}
               <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<Navigate to="/404" replace />} />
             </Routes>
           </main>
           <Footer />
         </div>
-      </Router>
-    </CartProvider>
+      </CartProvider>
     </HelmetProvider>
   );
 }

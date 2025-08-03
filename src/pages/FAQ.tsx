@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ChevronDownIcon } from 'lucide-react';
 import Card from '../components/ui/Card';
+
+// CSR ROUTE: This page uses Client-Side Rendering for better interactivity
+// Interactive FAQ accordion with state management
+
 const FAQ = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  
   const faqs = [{
     question: "What's your delivery policy?",
     answer: 'We offer free delivery on orders over $500. For orders under $500, a standard delivery fee of $25 applies. Express delivery is available for $35.'
   }, {
     question: 'How can I track my order?',
-    answer: "Once your order is shipped, you will receive a tracking number via email. You can use this number to track your order on our website or through the shipping carrier, s, website, : ., ',:"
+    answer: "Once your order is shipped, you will receive a tracking number via email. You can use this number to track your order on our website or through the shipping carrier's website."
   }, {
     question: 'What is your return policy?',
     answer: 'We accept returns within 30 days of purchase for unused items in their original packaging. Some restrictions apply to custom orders and bulk materials.'
@@ -21,6 +27,12 @@ const FAQ = () => {
     question: 'How do I cancel or modify my order?',
     answer: 'You can cancel or modify your order within 1 hour of placing it. Please contact our customer service team for assistance.'
   }];
+
+  // Filter FAQs based on search term
+  const filteredFaqs = faqs.filter(faq => 
+    faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   return <div className="bg-gray-50 min-h-screen">
       {/* Header */}
       <div className="bg-stone-800 text-white py-16">
@@ -36,17 +48,36 @@ const FAQ = () => {
       {/* FAQ Section */}
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-3xl mx-auto">
-          {faqs.map((faq, index) => <Card key={index} className="mb-4">
-              <details className="group">
-                <summary className="flex justify-between items-center cursor-pointer list-none">
-                  <h3 className="text-lg font-medium text-gray-900">
-                    {faq.question}
-                  </h3>
-                  <ChevronDownIcon className="h-5 w-5 text-gray-500 group-open:rotate-180 transition-transform" />
-                </summary>
-                <p className="mt-4 text-gray-600">{faq.answer}</p>
-              </details>
-            </Card>)}
+          {/* Search Bar */}
+          <div className="mb-8">
+            <input
+              type="text"
+              placeholder="Search FAQs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            />
+          </div>
+          
+          {filteredFaqs.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-600">No FAQs found matching your search.</p>
+            </div>
+          ) : (
+            filteredFaqs.map((faq, index) => (
+              <Card key={index} className="mb-4">
+                <details className="group">
+                  <summary className="flex justify-between items-center cursor-pointer list-none">
+                    <h3 className="text-lg font-medium text-gray-900">
+                      {faq.question}
+                    </h3>
+                    <ChevronDownIcon className="h-5 w-5 text-gray-500 group-open:rotate-180 transition-transform" />
+                  </summary>
+                  <p className="mt-4 text-gray-600">{faq.answer}</p>
+                </details>
+              </Card>
+            ))
+          )}
         </div>
         {/* Still Have Questions */}
         <div className="mt-12 text-center">
